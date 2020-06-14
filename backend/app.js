@@ -1,10 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const Post = require('./models/post');
 const { title } = require('process');
 
 const app = express();
+
+mongoose.connect(
+  "mongodb+srv://arjan:evyopyfE0YUuPz4o@mymessages-q6n2y.mongodb.net/<dbname>?retryWrites=true&w=majority",
+  // added due to deprication warning
+  { useNewUrlParser: true, useUnifiedTopology: true }
+)
+  .then(() => {
+    console.log("Connected to database!");
+  })
+  .catch(() => {
+    console.log("connection failed!")
+  });
 
 // for parsing json data, body is stream of bits initially
 app.use(bodyParser.json());
@@ -59,5 +72,3 @@ app.get('/api/posts', (req, res, next) => {
 });
 
 module.exports = app;
-
-// evyopyfE0YUuPz4o
