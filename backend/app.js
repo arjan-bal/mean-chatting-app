@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 // for parsing json data, body is stream of bits initially
-app.use(bodyParser.json);
+app.use(bodyParser.json());
 // not used here, but you can parse urlencoded data too
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -12,7 +12,7 @@ app.use((req, res, next) => {
   // for CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
-    "Access-Control-Allow-Header",
+    "Access-Control-Allow-Headers",
     "Origin, X-Requested-with, Content-Type, Accept"
   );
   // for allowed methods
@@ -33,7 +33,7 @@ app.post('/api/posts', (req, res, next) => {
   });
 });
 
-app.use('/api/posts', (req, res, next) => {
+app.get('/api/posts', (req, res, next) => {
   const posts = [
     {
       id: '3dsfds2342s',
@@ -47,7 +47,7 @@ app.use('/api/posts', (req, res, next) => {
     }
   ];
   res.status(200).json({
-    message: 'posts send successfully',
+    message: 'posts sent successfully',
     posts: posts
   });
 });
