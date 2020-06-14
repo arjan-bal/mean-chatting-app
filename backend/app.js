@@ -8,7 +8,7 @@ const { title } = require('process');
 const app = express();
 
 mongoose.connect(
-  "mongodb+srv://arjan:evyopyfE0YUuPz4o@mymessages-q6n2y.mongodb.net/<dbname>?retryWrites=true&w=majority",
+  "mongodb+srv://arjan:evyopyfE0YUuPz4o@mymessages-q6n2y.mongodb.net/node-angular?retryWrites=true&w=majority",
   // added due to deprication warning
   { useNewUrlParser: true, useUnifiedTopology: true }
 )
@@ -46,7 +46,8 @@ app.post('/api/posts', (req, res, next) => {
     title: req.body.title,
     content: req.body.content
   });
-  console.log(post);
+  // console.log(post);
+  post.save();
   res.status(201).json({
     message: "post added successfully"
   });
