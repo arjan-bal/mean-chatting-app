@@ -15,7 +15,8 @@ const routes: Routes = [
   // empty path means root path
   { path: '', component: PostListComponent },
   // localhost:4200/create
-  { path: 'create', component:  PostCreateComponent}
+  { path: 'create', component:  PostCreateComponent},
+  { path: 'edit/:postId', component: PostCreateComponent }
 ];
 
 @NgModule({
