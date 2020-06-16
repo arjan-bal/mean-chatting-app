@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormControlName } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { PostsService } from '../posts.service';
@@ -17,6 +17,7 @@ export class PostCreateComponent implements OnInit{
   private postId: string;
   isLoading = false;
   form: FormGroup;
+  imagePreview: string;
 
   constructor(public PostsService: PostsService, public route: ActivatedRoute) {}
 
@@ -57,6 +58,7 @@ export class PostCreateComponent implements OnInit{
     });
   }
 
+
   onSavePost() {
     if (this.form.invalid){
       return ;
@@ -77,6 +79,7 @@ export class PostCreateComponent implements OnInit{
     this.form.reset();
   }
 
+
   onImagePick(event: Event) {
     // explicit type conversion below
     const file = (event.target as HTMLInputElement).files[0];
@@ -85,7 +88,11 @@ export class PostCreateComponent implements OnInit{
       image: file
     });
     this.form.get('image').updateValueAndValidity();
-    console.log(file);
-    console.log(this.form);
+    const reader = new FileReader();
+    // callback to run when file is read
+    reader.onload = () => {
+      this.imagePreview = (reader.result as string);
+    }
+    reader.readAsDataURL(file);
   }
 }
