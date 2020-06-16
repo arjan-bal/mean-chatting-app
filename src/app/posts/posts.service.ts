@@ -57,7 +57,11 @@ export class PostsService {
     };
     this.http.put('http://localhost:3000/api/posts/' + postId, post)
       .subscribe((response) => {
-        console.log(response);
+        const updatedPosts = [...this.posts];
+        const postIndex = updatedPosts.findIndex(post => post.id === postId);
+        updatedPosts[postIndex] = post;
+        this.posts = updatedPosts;
+        this.postsUpdated.next([...this.posts]);
       });
   }
 
