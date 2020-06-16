@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormControlName } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { PostsService } from '../posts.service';
@@ -28,6 +28,9 @@ export class PostCreateComponent implements OnInit{
       content: new FormControl(null, {
         validators: [Validators.required]
       }),
+      image: new FormControl(null, {
+        validators: [Validators.required]
+      })
     });
     // observable to listen to changes in route urls/params
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
@@ -72,5 +75,17 @@ export class PostCreateComponent implements OnInit{
       );
     }
     this.form.reset();
+  }
+
+  onImagePick(event: Event) {
+    // explicit type conversion below
+    const file = (event.target as HTMLInputElement).files[0];
+    // not limited to storing text in a form, here we store file object
+    this.form.patchValue({
+      image: file
+    });
+    this.form.get('image').updateValueAndValidity();
+    console.log(file);
+    console.log(this.form);
   }
 }
