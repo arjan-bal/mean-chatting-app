@@ -67,10 +67,16 @@ app.get('/api/posts', (req, res, next) => {
 // get single post for Update
 app.get('/api/posts/:id', (req, res, next) => {
   Post.findById(req.params.id).then(post => {
-    res.status(200).json({
-      message: 'post sent successfully',
-      post: post
-    });
+    if (post){
+      res.status(200).json({
+        message: 'post sent successfully',
+        post: post
+      });
+    } else {
+      res.status(404).json({
+        message: 'post not found!'
+      });
+    }
   });
 });
 

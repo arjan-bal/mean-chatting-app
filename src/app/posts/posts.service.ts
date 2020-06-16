@@ -30,7 +30,10 @@ export class PostsService {
   }
 
   getPost(postId: string) {
-    return {...this.posts.find(post => post.id === postId)};
+    // return observable and subscribe at destination,
+    // because you can return from within a subscribe block
+    // as it is asynchoronous code
+    return this.http.get<{message: string, post: any}>('http://localhost:3000/api/posts/' + postId)
   }
 
   getPostUpdateListner() {
