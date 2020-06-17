@@ -33,7 +33,7 @@ const storage = multer.diskStorage({
 // can add any number of middleware to paths,
 // evaluated from left to right
 // 'image' tells multer to look for image attribute of req.body
-router.post('', multer(storage).single('image'),async (req, res, next) => {
+router.post('', multer({storage: storage}).single('image'),async (req, res, next) => {
   const post = new Post({
     title: req.body.title,
     content: req.body.content
