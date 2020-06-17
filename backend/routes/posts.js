@@ -1,12 +1,39 @@
 const express = require('express');
+const multer = require('multer');
 
 const Post = require('../models/post');
 
 const router = express.Router();
 
+const MIME_TYPE_MAP = {
+  'image/png': 'png',
+  'image/jpg': 'jpg',
+  'image/jpeg': 'jpeg'
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype];
+    let error = new Error('invalid mimetype');
+    if(isValid){
+      error = null;
+    }
+    // destination path relative to server.js
+    cb(error, 'backend/images')
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname.toLowerCase().split(' ').join('-');
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + '-' + Date.now() + '.' + ext);
+  }
+});
+
 // /api/posts is already present in path due to app.js
 
-router.post('', async (req, res, next) => {
+// can add any number of middleware to paths,
+// evaluated from left to right
+// 'image' tells multer to look for image attribute of req.body
+router.post('', multer(storage).single('image'),async (req, res, next) => {
   const post = new Post({
     title: req.body.title,
     content: req.body.content
