@@ -68,17 +68,36 @@ export class PostsService {
       });
   }
 
-  updatePost(postId: string, title: string, content: string) {
-    const post: Post = {
-      id: postId,
-      title: title,
-      content: content,
-      imagePath: null
-    };
-    this.http.put('http://localhost:3000/api/posts/' + postId, post)
-      .subscribe((response) => {
+  updatePost(postId: string, title: string, content: string, image: string | File) {
+    // there can be two type of updates
+    // one with image as string, we need to send a json put request
+    // one with image as file, we need to send formdata put request
+    let postData: Post | FormData;
+    if (typeof(image) === 'object') {
+      // file will be an object, formdata request
+      postData = new FormData();
+      postData.append('title', title);
+      postData.append('content', content);
+      postData.append('image', image, title);
+    } else {
+      // json request
+      postData = {
+        id: postId,
+        title: title,
+        content: content,
+        imagePath: image
+      }
+    }
+    this.http.put('http://localhost:3000/api/posts/' + postId, postData)
+      .subscribe((response: any) => {
         const updatedPosts = [...this.posts];
         const postIndex = updatedPosts.findIndex(post => post.id === postId);
+        const post: Post = {
+          id: postId,
+          title: title,
+          content: content,
+          imagePath: response.imagePath
+        }
         updatedPosts[postIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);

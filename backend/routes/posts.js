@@ -33,7 +33,7 @@ const storage = multer.diskStorage({
 // can add any number of middleware to paths,
 // evaluated from left to right
 // 'image' tells multer to look for image attribute of req.body
-router.post('', multer({storage: storage}).single('image'),async (req, res, next) => {
+router.post('', multer({storage: storage}).single('image'), async (req, res, next) => {
   const url = req.protocol + '://' + req.get("host");
   const post = new Post({
     title: req.body.title,
@@ -81,13 +81,21 @@ router.delete('/:id', async (req, res, next) => {
   });
 });
 
-router.put('/:id', async (req, res, next) => {
-  const post = {
-    title: req.body.title,
-    content: req.body.content
-  };
-  const result = await Post.updateOne({_id: req.params.id}, post);
-  res.status(200).json({ message: 'Update successful!' });
+router.put('/:id',
+  multer({storage: storage}).single('image'),
+  async (req, res, next) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + '://' + req.get("host");
+      imagePath = url + '/images/' + req.file.filename;
+    }
+    const post = {
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath
+    };
+    const result = await Post.updateOne({_id: req.params.id}, post);
+    res.status(200).json({ message: 'Update successful!' , imagePath: imagePath});
 })
 
 module.exports = router;

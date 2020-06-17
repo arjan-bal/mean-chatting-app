@@ -1,9 +1,12 @@
 import { AbstractControl } from '@angular/forms';
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, of } from 'rxjs';
 
 // [key: string] implies that the name key can be anyhing, but of type string
 export const mimeType = (control: AbstractControl):
   Promise<{ [key: string]: any }> | Observable<{ [key: string]: any }> => {
+    if (typeof(control.value) === 'string') {
+      return of(null);
+    }
     const file = control.value as File;
     const fileReader = new FileReader();
     // async validator need to return an observable or promise
