@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -22,6 +23,9 @@ mongoose.connect(
 app.use(bodyParser.json());
 // not used here, but you can parse urlencoded data too
 app.use(bodyParser.urlencoded({extended: false}));
+// express.static allows requests to acess all images
+// path is used to forward request to /backend/images
+app.use('/images', express.static(path.join('backend/images')))
 
 app.use((req, res, next) => {
   // for CORS

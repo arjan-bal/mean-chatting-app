@@ -16,11 +16,12 @@ export class PostsService {
   getPosts() {
     this.http.get<{message: string, posts: any}>('http://localhost:3000/api/posts')
       .pipe(map(postData => {
-        return postData.posts.map((post: { _id: string; title: string; content: string; }) => {
+        return postData.posts.map((post: any) => {
           return {
             id: post._id,
             title: post.title,
-            content: post.content
+            content: post.content,
+            imagePath: post.imagePath
           };
         });
       }))
@@ -49,16 +50,17 @@ export class PostsService {
 
     // send new post to server
     // angular will automatically detect formdata and set the required headers
-    this.http.post<{message: string, postId: string}>(
+    this.http.post<{message: string, post: Post}>(
       'http://localhost:3000/api/posts',
       postData
     )
       .subscribe((responseData) => {
         // optmistic updating on local copy
         const post: Post = {
-          id: responseData.postId,
+          id: responseData.post.id,
           title: title,
-          content: content
+          content: content,
+          imagePath: responseData.post.imagePath
         };
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
@@ -70,7 +72,8 @@ export class PostsService {
     const post: Post = {
       id: postId,
       title: title,
-      content: content
+      content: content,
+      imagePath: null
     };
     this.http.put('http://localhost:3000/api/posts/' + postId, post)
       .subscribe((response) => {
