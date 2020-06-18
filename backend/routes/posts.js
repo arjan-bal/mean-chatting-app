@@ -52,7 +52,16 @@ router.post('', multer({storage: storage}).single('image'), async (req, res, nex
 });
 
 router.get('', async (req, res, next) => {
-  const documents = await Post.find();
+  const postQuery = Post.find();
+  // + is for converting string to int
+  const pageSize = +req.query.pageSize;
+  const currentPage = +req.query.page;
+  if (pageSize && currentPage) {
+    postQuery
+      .skip(pageSize * (currentPage - 1)) // 1 based indexing for page
+      .limit(pageSize);
+  }
+  const documents = await postQuery;
    res.status(200).json({
       message: 'posts sent successfully',
       posts: documents
