@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 
 const Post = require('../models/post');
+const { promises } = require('dns');
 
 const router = express.Router();
 
@@ -53,6 +54,7 @@ router.post('', multer({storage: storage}).single('image'), async (req, res, nex
 
 router.get('', async (req, res, next) => {
   const postQuery = Post.find();
+  // console.log(req.query);
   // + is for converting string to int
   const pageSize = +req.query.pageSize;
   const currentPage = +req.query.page;
@@ -61,10 +63,11 @@ router.get('', async (req, res, next) => {
       .skip(pageSize * (currentPage - 1)) // 1 based indexing for page
       .limit(pageSize);
   }
-  const documents = await postQuery;
+  const results = await Promise.all([postQuery, Post.countDocuments()]);
    res.status(200).json({
       message: 'posts sent successfully',
-      posts: documents
+      posts: results[0],
+      maxPosts: results[1]
     });
 });
 
