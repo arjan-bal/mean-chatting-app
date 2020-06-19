@@ -18,4 +18,13 @@ export class AuthService {
     const response = await this.http.post('http://localhost:3000/api/user/signup', authData).toPromise();
     console.log(response);
   }
+
+  async login(email: string, password: string) {
+    const authData: AuthData = {
+      email: email,
+      password: password
+    };
+    const response = await this.http.post('http://localhost:3000/api/user/login', authData).toPromise();
+    console.log(response);
+  }
 }
