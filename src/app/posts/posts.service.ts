@@ -14,9 +14,9 @@ export class PostsService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  getPosts(pageSize: number, currentPage: number) {
+  async getPosts(pageSize: number, currentPage: number) {
     const query = `?pageSize=${pageSize}&page=${currentPage}`;
-    this.http.get<{message: string, posts: any, maxPosts: number}>('http://localhost:3000/api/posts' + query)
+    const transformedPostsData = await this.http.get<{message: string, posts: any, maxPosts: number}>('http://localhost:3000/api/posts' + query)
       .pipe(
         map(postData => {
           return {
@@ -31,14 +31,12 @@ export class PostsService {
             maxPosts: postData.maxPosts
           };
         })
-      )
-      .subscribe((transformedPostsData) => {
-        this.posts = transformedPostsData.posts;
-        this.postsCount = transformedPostsData.maxPosts;
-        this.postsUpdated.next({
-          posts: [...this.posts],
-          postsCount: this.postsCount
-        });
+      ).toPromise();
+      this.posts = transformedPostsData.posts;
+      this.postsCount = transformedPostsData.maxPosts;
+      this.postsUpdated.next({
+        posts: [...this.posts],
+        postsCount: this.postsCount
       });
   }
 
@@ -53,7 +51,7 @@ export class PostsService {
     return this.postsUpdated.asObservable();
   }
 
-  addPost(title: string, content: string, image: File) {
+  async addPost(title: string, content: string, image: File) {
     const postData = new FormData();
     postData.append('title', title);
     postData.append('content', content);
@@ -61,16 +59,14 @@ export class PostsService {
 
     // send new post to server
     // angular will automatically detect formdata and set the required headers
-    this.http.post<{message: string, post: Post}>(
+    const responseData = await this.http.post<{message: string, post: Post}>(
       'http://localhost:3000/api/posts',
       postData
-    )
-      .subscribe((responseData) => {
-        this.router.navigate(['/']);
-      });
+    ).toPromise()
+    this.router.navigate(['/']);
   }
 
-  updatePost(postId: string, title: string, content: string, image: string | File) {
+  async updatePost(postId: string, title: string, content: string, image: string | File) {
     // there can be two type of updates
     // one with image as string, we need to send a json put request
     // one with image as file, we need to send formdata put request
@@ -90,10 +86,8 @@ export class PostsService {
         imagePath: image
       }
     }
-    this.http.put('http://localhost:3000/api/posts/' + postId, postData)
-      .subscribe((response: any) => {
-        this.router.navigate(['/']);
-      });
+    const response = await this.http.put('http://localhost:3000/api/posts/' + postId, postData).toPromise();
+    this.router.navigate(['/']);
   }
 
   deletePost(postId: string) {
