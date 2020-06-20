@@ -9,11 +9,16 @@ import { AuthData } from './auth-data.model';
 export class AuthService {
   private token: string;
   private authStatusListner = new Subject<boolean>();
+  private isAuth: boolean = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   getToken() {
     return this.token;
+  }
+
+  getIsAuth() {
+    return this.isAuth;
   }
 
   getAuthStatusListner() {
@@ -35,6 +40,9 @@ export class AuthService {
     };
     const response = await this.http.post<{token: string}>('http://localhost:3000/api/user/login', authData).toPromise();
     this.token = response.token;
-    this.authStatusListner.next(true);
+    if (this.token) {
+      this.authStatusListner.next(true);
+      this.isAuth = true;
+    }
   }
 }
