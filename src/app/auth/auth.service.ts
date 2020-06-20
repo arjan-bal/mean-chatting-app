@@ -31,6 +31,7 @@ export class AuthService {
       password: password
     };
     const response = await this.http.post('http://localhost:3000/api/user/signup', authData).toPromise();
+    this.router.navigate(['/login']);
   }
 
   async login(email: string, password: string) {
@@ -43,6 +44,7 @@ export class AuthService {
     if (this.token) {
       this.isAuth = true;
       this.authStatusListner.next(true);
+      this.router.navigate(['/']);
     }
   }
 
@@ -50,5 +52,6 @@ export class AuthService {
     this.token = null;
     this.isAuth = false;
     this.authStatusListner.next(false);
+    this.router.navigate(['/']);
   }
 }
