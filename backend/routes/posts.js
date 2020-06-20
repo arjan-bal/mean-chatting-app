@@ -42,9 +42,9 @@ router.post('',
   const post = new Post({
     title: req.body.title,
     content: req.body.content,
-    imagePath: url + '/images/' + req.file.filename
+    imagePath: url + '/images/' + req.file.filename,
+    creator: req.userData.userId
   });
-  // console.log(post);
   const createdPost = await post.save();
   res.status(201).json({
     message: "post added successfully",
