@@ -8,11 +8,16 @@ import { AuthData } from './auth-data.model';
 @Injectable({providedIn: 'root'})
 export class AuthService {
   private token: string;
+  private authStatusListner = new Subject<boolean>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
   getToken() {
     return this.token;
+  }
+
+  getAuthStatusListner() {
+    return this.authStatusListner.asObservable();
   }
 
   async createUser(email: string, password: string) {
@@ -21,7 +26,6 @@ export class AuthService {
       password: password
     };
     const response = await this.http.post('http://localhost:3000/api/user/signup', authData).toPromise();
-    console.log(response);
   }
 
   async login(email: string, password: string) {
@@ -30,7 +34,7 @@ export class AuthService {
       password: password
     };
     const response = await this.http.post<{token: string}>('http://localhost:3000/api/user/login', authData).toPromise();
-    console.log(response);
     this.token = response.token;
+    this.authStatusListner.next(true);
   }
 }
