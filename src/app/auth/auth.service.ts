@@ -41,8 +41,14 @@ export class AuthService {
     const response = await this.http.post<{token: string}>('http://localhost:3000/api/user/login', authData).toPromise();
     this.token = response.token;
     if (this.token) {
-      this.authStatusListner.next(true);
       this.isAuth = true;
+      this.authStatusListner.next(true);
     }
+  }
+
+  logout() {
+    this.token = null;
+    this.isAuth = false;
+    this.authStatusListner.next(false);
   }
 }
