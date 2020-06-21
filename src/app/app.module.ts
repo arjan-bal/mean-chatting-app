@@ -50,7 +50,7 @@ import { ErrorInterceptor } from './error-interceptor';
     // multi: true indicates that there can be multiple interceptors
     // don't overwrite the previous one
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: Error Interceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
