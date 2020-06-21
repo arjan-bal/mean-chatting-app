@@ -36,7 +36,14 @@ export class AuthService {
       email: email,
       password: password
     };
-    const response = await this.http.post('http://localhost:3000/api/user/signup', authData).toPromise();
+    try {
+      const response = await this.http.post('http://localhost:3000/api/user/signup', authData).toPromise();
+    } catch (err) {
+      console.log(err);
+      // emmiting false to disable spinner in signup component
+      this.authStatusListner.next(false);
+      return ;
+    }
     this.router.navigate(['/login']);
   }
 
@@ -45,7 +52,14 @@ export class AuthService {
       email: email,
       password: password
     };
-    const response = await this.http.post<{token: string, userId: string, expiresIn: number}>('http://localhost:3000/api/user/login', authData).toPromise();
+    let response;
+    try {
+      response = await this.http.post<{token: string, userId: string, expiresIn: number}>('http://localhost:3000/api/user/login', authData).toPromise();
+    } catch(err) {
+      // emmiting false to disable spinner in login component
+      this.authStatusListner.next(false);
+      return ;
+    }
     this.token = response.token;
     if (this.token) {
       this.isAuth = true;

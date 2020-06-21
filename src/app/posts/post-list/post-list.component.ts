@@ -37,7 +37,7 @@ export class PostListComponent implements OnInit, OnDestroy{
         postsCount: number
       }) => {
         this.posts = postsData.posts;
-        console.log(this.posts);
+        // console.log(this.posts);
         this.totalPosts = postsData.postsCount;
         this.isLoading = false;
       });
