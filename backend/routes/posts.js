@@ -92,10 +92,17 @@ router.get('/:id', async (req, res, next) => {
 router.delete('/:id',
   checkAuth,
   async (req, res, next) => {
-  const result = await  Post.deleteOne({_id: req.params.id});
-  res.status(200).json({
-    message: 'Post deleted!'
+  const result = await  Post.deleteOne({
+    _id: req.params.id,
+    creator: req.userData.userId
   });
+  if (result.deletedCount > 0) {
+    res.status(200).json({
+      message: 'Post deleted!'
+    });
+  } else {
+    res.status(401).json({ message: 'Not Authorized!' });
+  }
 });
 
 router.put('/:id',
@@ -110,10 +117,18 @@ router.put('/:id',
     const post = {
       title: req.body.title,
       content: req.body.content,
-      imagePath: imagePath
+      imagePath: imagePath,
+      creator: req.userData.userId
     };
-    const result = await Post.updateOne({_id: req.params.id}, post);
-    res.status(200).json({ message: 'Update successful!' , imagePath: imagePath});
+    const result = await Post.updateOne({
+      _id: req.params.id,
+      creator: req.userData.userId
+    }, post);
+    if (result.nModified > 0) {
+      res.status(200).json({ message: 'Update successful!' , imagePath: imagePath});
+    } else {
+      res.status(401).json({ message: 'Not Authorized!' });
+    }
 })
 
 module.exports = router;

@@ -85,7 +85,8 @@ export class PostsService {
         id: postId,
         title: title,
         content: content,
-        imagePath: image
+        imagePath: image,
+        creator: null
       }
     }
     const response = await this.http.put('http://localhost:3000/api/posts/' + postId, postData).toPromise();
