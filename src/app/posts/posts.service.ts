@@ -5,6 +5,9 @@ import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Post } from './post.model';
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL = `${environment.apiUrl}/posts`;
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
@@ -16,7 +19,7 @@ export class PostsService {
 
   async getPosts(pageSize: number, currentPage: number) {
     const query = `?pageSize=${pageSize}&page=${currentPage}`;
-    const transformedPostsData = await this.http.get<{message: string, posts: any, maxPosts: number}>('http://localhost:3000/api/posts' + query)
+    const transformedPostsData = await this.http.get<{message: string, posts: any, maxPosts: number}>(BACKEND_URL + query)
       .pipe(
         map(postData => {
           return {
@@ -46,7 +49,7 @@ export class PostsService {
     // return observable and subscribe at destination,
     // because you can't return from within a subscribe block
     // as it is asynchoronous code
-    return this.http.get<{message: string, post: any}>('http://localhost:3000/api/posts/' + postId)
+    return this.http.get<{message: string, post: any}>(`${BACKEND_URL}/${postId}`)
   }
 
   getPostUpdateListner() {
@@ -62,7 +65,7 @@ export class PostsService {
     // send new post to server
     // angular will automatically detect formdata and set the required headers
     const responseData = await this.http.post<{message: string, post: Post}>(
-      'http://localhost:3000/api/posts',
+      BACKEND_URL,
       postData
     ).toPromise()
     this.router.navigate(['/']);
@@ -89,11 +92,11 @@ export class PostsService {
         creator: null
       }
     }
-    const response = await this.http.put('http://localhost:3000/api/posts/' + postId, postData).toPromise();
+    const response = await this.http.put(`${BACKEND_URL}/${postId}`, postData).toPromise();
     this.router.navigate(['/']);
   }
 
   deletePost(postId: string) {
-    return this.http.delete('http://localhost:3000/api/posts/' + postId);
+    return this.http.delete(`${BACKEND_URL}/${postId}`);
   }
 }

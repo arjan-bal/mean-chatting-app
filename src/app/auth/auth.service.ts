@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import { AuthData } from './auth-data.model';
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL = `${environment.apiUrl}/user`;
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -37,7 +40,7 @@ export class AuthService {
       password: password
     };
     try {
-      const response = await this.http.post('http://localhost:3000/api/user/signup', authData).toPromise();
+      const response = await this.http.post(`${BACKEND_URL}/signup`, authData).toPromise();
     } catch (err) {
       console.log(err);
       // emmiting false to disable spinner in signup component
@@ -54,7 +57,7 @@ export class AuthService {
     };
     let response;
     try {
-      response = await this.http.post<{token: string, userId: string, expiresIn: number}>('http://localhost:3000/api/user/login', authData).toPromise();
+      response = await this.http.post<{token: string, userId: string, expiresIn: number}>(`${BACKEND_URL}/login`, authData).toPromise();
     } catch(err) {
       // emmiting false to disable spinner in login component
       this.authStatusListner.next(false);
