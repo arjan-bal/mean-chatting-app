@@ -45,8 +45,9 @@ router.post('',
     imagePath: url + '/images/' + req.file.filename,
     creator: req.userData.userId
   });
+  let createdPost;
   try {
-    const createdPost = await post.save();
+    createdPost = await post.save();
   } catch {
     return res.status(500).json({
       message: 'Creating a post failed!'
@@ -72,8 +73,9 @@ router.get('', async (req, res, next) => {
       .skip(pageSize * (currentPage - 1)) // 1 based indexing for page
       .limit(pageSize);
   }
+  let results;
   try{
-    const results = await Promise.all([postQuery, Post.countDocuments()]);
+    results = await Promise.all([postQuery, Post.countDocuments()]);
   } catch {
     return res.status(500).json({
       message: 'Fetching posts failed!'
@@ -88,8 +90,9 @@ router.get('', async (req, res, next) => {
 
 // get single post for Update
 router.get('/:id', async (req, res, next) => {
+  let post;
   try{
-    const post = await Post.findById(req.params.id);
+    post = await Post.findById(req.params.id);
   } catch {
     return res.status(500).json({
       message: "Fetching post failed!"
@@ -110,10 +113,17 @@ router.get('/:id', async (req, res, next) => {
 router.delete('/:id',
   checkAuth,
   async (req, res, next) => {
-  const result = await  Post.deleteOne({
-    _id: req.params.id,
-    creator: req.userData.userId
-  });
+  let result;
+  try{
+    result = await  Post.deleteOne({
+      _id: req.params.id,
+      creator: req.userData.userId
+    });
+  } catch {
+    return res.status(500).json({
+      message: "Post deletion failed!"
+    });
+  }
   if (result.deletedCount > 0) {
     res.status(200).json({
       message: 'Post deleted!'
@@ -138,8 +148,9 @@ router.put('/:id',
       imagePath: imagePath,
       creator: req.userData.userId
     };
+    let result;
     try {
-      const result = await Post.updateOne({
+      result = await Post.updateOne({
         _id: req.params.id,
         creator: req.userData.userId
       }, post);
