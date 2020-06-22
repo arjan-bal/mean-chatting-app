@@ -37,22 +37,22 @@ const storage = multer.diskStorage({
 router.post('',
   checkAuth,
   multer({storage: storage}).single('image'),
-  PostsController.CreatePost);
+  PostsController.createPost);
 
-router.get('', PostsController.GetPosts);
+router.get('', PostsController.getPosts);
 
 // get single post for Update
-router.get('/:id', PostsController.GetPost);
+router.get('/:id', PostsController.getPost);
 
 router.delete('/:id',
   checkAuth,
-  PostsController.DeletePost
+  PostsController.deletePost
 );
 
 router.put('/:id',
   checkAuth,
   multer({storage: storage}).single('image'),
-  PostsController.UpdatePost
+  PostsController.updatePost
 )
 
 module.exports = router;

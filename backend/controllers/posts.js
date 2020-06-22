@@ -1,6 +1,6 @@
 const Post = require('../models/post');
 
-exports.CreatePost = async (req, res, next) => {
+exports.createPost = async (req, res, next) => {
   const url = req.protocol + '://' + req.get("host");
   const post = new Post({
     title: req.body.title,
@@ -25,7 +25,7 @@ exports.CreatePost = async (req, res, next) => {
   });
 }
 
-exports.GetPosts = async (req, res, next) => {
+exports.getPosts = async (req, res, next) => {
   const postQuery = Post.find();
   // console.log(req.query);
   // + is for converting string to int
@@ -51,7 +51,7 @@ exports.GetPosts = async (req, res, next) => {
   });
 }
 
-exports.GetPost = async (req, res, next) => {
+exports.getPost = async (req, res, next) => {
   let post;
   try{
     post = await Post.findById(req.params.id);
@@ -72,7 +72,7 @@ exports.GetPost = async (req, res, next) => {
   }
 }
 
-exports.DeletePost = async (req, res, next) => {
+exports.deletePost = async (req, res, next) => {
   let result;
   try{
     result = await  Post.deleteOne({
@@ -93,7 +93,7 @@ exports.DeletePost = async (req, res, next) => {
   }
 }
 
-exports.UpdatePost = async (req, res, next) => {
+exports.updatePost = async (req, res, next) => {
   let imagePath = req.body.imagePath;
   if (req.file) {
     const url = req.protocol + '://' + req.get("host");
