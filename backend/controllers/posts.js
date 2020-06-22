@@ -116,7 +116,7 @@ exports.updatePost = async (req, res, next) => {
       message: "Couldn't update post!"
     });
   }
-  if (result.nModified > 0) {
+  if (result.n > 0) {
     res.status(200).json({ message: 'Update successful!' , imagePath: imagePath});
   } else {
     res.status(401).json({ message: 'Not Authorized!' });
