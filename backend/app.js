@@ -9,7 +9,7 @@ const userRoutes = require('./routes/user');
 const app = express();
 
 mongoose.connect(
-  "mongodb+srv://arjan:evyopyfE0YUuPz4o@mymessages-q6n2y.mongodb.net/node-angular?retryWrites=true&w=majority",
+  `mongodb+srv://arjan:${process.env.MONGO_ATLAS_PASSWORD}@mymessages-q6n2y.mongodb.net/node-angular?retryWrites=true&w=majority`,
   // added due to deprication warning
   { useNewUrlParser: true, useUnifiedTopology: true }
 )
