@@ -45,9 +45,15 @@ router.post('',
     imagePath: url + '/images/' + req.file.filename,
     creator: req.userData.userId
   });
-  const createdPost = await post.save();
+  try {
+    const createdPost = await post.save();
+  } catch {
+    return res.status(500).json({
+      message: 'Creating a post failed!'
+    });
+  }
   res.status(201).json({
-    message: "post added successfully",
+    message: "Post added successfully",
     post: {
       ...createdPost.toObject(),
       id: createdPost._id
@@ -66,25 +72,37 @@ router.get('', async (req, res, next) => {
       .skip(pageSize * (currentPage - 1)) // 1 based indexing for page
       .limit(pageSize);
   }
-  const results = await Promise.all([postQuery, Post.countDocuments()]);
-   res.status(200).json({
-      message: 'posts sent successfully',
-      posts: results[0],
-      maxPosts: results[1]
+  try{
+    const results = await Promise.all([postQuery, Post.countDocuments()]);
+  } catch {
+    return res.status(500).json({
+      message: 'Fetching posts failed!'
     });
+  }
+  res.status(200).json({
+    message: 'Posts sent successfully',
+    posts: results[0],
+    maxPosts: results[1]
+  });
 });
 
 // get single post for Update
 router.get('/:id', async (req, res, next) => {
-  const post = await Post.findById(req.params.id);
+  try{
+    const post = await Post.findById(req.params.id);
+  } catch {
+    return res.status(500).json({
+      message: "Fetching post failed!"
+    });
+  }
   if (post){
     res.status(200).json({
-      message: 'post sent successfully',
+      message: 'Post sent successfully',
       post: post
     });
   } else {
     res.status(404).json({
-      message: 'post not found!'
+      message: 'Post not found!'
     });
   }
 });
@@ -120,10 +138,16 @@ router.put('/:id',
       imagePath: imagePath,
       creator: req.userData.userId
     };
-    const result = await Post.updateOne({
-      _id: req.params.id,
-      creator: req.userData.userId
-    }, post);
+    try {
+      const result = await Post.updateOne({
+        _id: req.params.id,
+        creator: req.userData.userId
+      }, post);
+    } catch {
+      return res.status(500).json({
+        message: "Couldn't update post!"
+      });
+    }
     if (result.nModified > 0) {
       res.status(200).json({ message: 'Update successful!' , imagePath: imagePath});
     } else {
