@@ -4,6 +4,8 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 
+import '../../../assets/login-animation.js';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -22,9 +24,14 @@ export class LoginComponent implements OnInit, OnDestroy{
         // false is emmited from authservice on failure
         if (!authStatus ) {
           this.isLoading = false;
+          this.ngOnInit();
         }
       }
     );
+  }
+
+  ngAfterViewInit() {
+    (window as any).initialize();
   }
 
   ngOnDestroy() {
